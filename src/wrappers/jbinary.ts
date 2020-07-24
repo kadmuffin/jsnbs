@@ -54,7 +54,7 @@ class Binary {
     let value = -1;
 
     while (true) {
-      let jump = this.buffer.uint16();
+      let jump = this.uint16();
       if (!jump) break;
 
       value += jump;
@@ -103,4 +103,4 @@ class BinaryWrite {
   }
 }
 
-export { Binary };
+export { Binary, BinaryWrite };

@@ -1,5 +1,5 @@
 import { Binary } from "./wrappers/jbinary";
-import { Header, Note, Layer, Instrument } from "./helpers/exports";
+import { Header, Note, Layer, Instrument } from "./basic/exports";
 import { NBSFile } from "./nbsfile";
 
 class Parser {
@@ -13,7 +13,7 @@ class Parser {
     let header = this.parse_header();
     return new NBSFile(
       header,
-      Array.from(this.parse_notes()),
+      Array.from(this.parse_notes(header.version)),
       Array.from(this.parse_layers(header.song_layers, header.version)),
       Array.from(this.parse_instruments())
     );
@@ -25,10 +25,10 @@ class Parser {
    *  Header class
    */
   parse_header(): Header {
-    let song_length = this.buffer.int8();
+    let song_length = this.buffer.uint16();
     let version = 0;
 
-    if (!song_length) version = this.buffer.int8();
+    if (!song_length) version = this.buffer.uint8();
 
     let header = new Header();
 
@@ -64,17 +64,17 @@ class Parser {
    *  @returns
    *  Generator -> Note
    */
-  *parse_notes(): Generator<Note> {
+  *parse_notes(version: number): Generator<Note> {
     for (const tick of this.buffer.jump()) {
       for (const layer of this.buffer.jump()) {
-        yield new Note({
+        yield Note.named({
           tick: tick,
           layer: layer,
           instrument: this.buffer.uint8(),
           key: this.buffer.uint8(),
-          velocity: this.buffer.uint8(),
-          panning: this.buffer.uint8() - 100,
-          pitch: this.buffer.uint16(),
+          velocity: version >= 4 ? this.buffer.uint8() : 100,
+          panning: version >= 4 ? this.buffer.uint8() - 100 : 0,
+          pitch: version >= 4 ? this.buffer.uint16() : 0,
         });
       }
     }
@@ -87,7 +87,7 @@ class Parser {
    */
   *parse_layers(layers_count: number, version: number): Generator<Layer> {
     for (let i = 0; i < layers_count; i++) {
-      yield new Layer({
+      yield Layer.named({
         id: i,
         name: this.buffer.string(),
         lock: version >= 4 ? this.buffer.uint8() == 1 : false,
@@ -105,13 +105,15 @@ class Parser {
   private *parse_instruments(): Generator<Instrument> {
     let instruments = this.buffer.uint8();
     for (let i = 0; i < instruments; i++) {
-      yield new Instrument({
+      yield Instrument.named({
         id: i,
         name: this.buffer.string(),
         file: this.buffer.string(),
         pitch: this.buffer.uint8(),
-        press_key: this.buffer.uint8(),
+        press_key: this.buffer.uint8() == 1,
       });
     }
   }
 }
+
+export { Parser };

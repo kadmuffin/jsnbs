@@ -14,7 +14,7 @@ jsnbs.load("demo_song.nbs").then((song) => {
 });
 ```
 
-You can also use `jsnbs` to modify or create new songs.
+If you want to modify or save nbs files with `jsnbs`, the code should be able to handle saving in most cases.
 
 ```javascript
 const jsnbs = require("jsnbs");
@@ -22,7 +22,7 @@ const jsnbs = require("jsnbs");
 jsnbs.load("demo_song.nbs").then((song) => {
 
   song.notes.push(..[
-    jsnbs.Note({
+    jsnbs.Note.named({
       tick: 0,
       layer: 0,
       instrument: 0,
@@ -60,7 +60,7 @@ You can use the `read()` function to read and parse a specific NBS file.
 jsnbs.read('demo_song.nbs')
 ```
 
-The `read()` function returns a `jsnbs` file object. These objects have several
+The `read()` function returns a Promise of the `jsnbs` file object. These objects have several
 attributes that mirror the binary structure of NBS files.
 
 #### Header
@@ -110,8 +110,8 @@ let first_note = demo_song.notes[0];
 | :---------------- | :---- | :--------------------------------------------------------- |
 | `note.tick`       | `int` | The tick at which the note plays.                          |
 | `note.layer`      | `int` | The ID of the layer in which the note is placed.           |
-| `note.instrument` | `int` | The ID of the instrument.                                  |
 | `note.key`        | `int` | The key of the note. (between 0 and 87)                    |
+| `note.instrument` | `int` | The ID of the instrument.                                  |
 | `note.velocity`   | `int` | The velocity of the note. (between 0 and 100)              |
 | `note.panning`    | `int` | The stereo panning of the note. (between -100 and 100)     |
 | `note.pitch`      | `int` | The detune of the note, in cents. (between -1200 and 1200) |
@@ -169,7 +169,7 @@ You can create new files using the `new_file()` function. The function lets
 you specify header attributes with keyword arguments.
 
 ```javascript
-let new_file = jsnbs.new_file((song_name = "Hello world"));
+let new_file = jsnbs.new_file(jsnbs.Header({ song_name: "Hello world" }));
 ```
 
 The function returns a new `jsnbs` file object that you can now edit
@@ -177,8 +177,7 @@ programmatically.
 
 ### Saving files
 
-You can use the `save()` method to encode and write the file to a specified
-location.
+This port is mainly intended for reading, but you should be able to use the `save()` method to encode and write the files.
 
 ```javascript
 new_file.save("new_file.nbs");
@@ -188,8 +187,8 @@ By default, the file will be saved in the latest NBS version available.
 To save the file in an older version, you can use the `version` parameter:
 
 ```javascript
-# This will save the song in the classic format.
-new_file.save('new_file.nbs', version=0)
+// This will save the song in the classic format.
+new_file.save("new_file.nbs", (version = 0));
 ```
 
 (Keep in mind some of the song properties may be lost when saving in older versions.)
