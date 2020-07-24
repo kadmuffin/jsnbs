@@ -1,5 +1,5 @@
-import { BinaryWrite } from "./wrappers/jbinary";
-import { NBSFile } from "./nbsfile";
+import { BinaryWrite } from './wrappers/jbinary_wrap';
+import { NBSFile } from './nbsfile';
 
 class Writer {
   /** Holds the writes functions and runs them

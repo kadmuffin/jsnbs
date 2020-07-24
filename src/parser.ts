@@ -1,6 +1,6 @@
-import { Binary } from "./wrappers/jbinary";
-import { Header, Note, Layer, Instrument } from "./basic/exports";
-import { NBSFile } from "./nbsfile";
+import { Binary } from './wrappers/jbinary_wrap';
+import { Header, Note, Layer, Instrument } from './basic/exports';
+import { NBSFile } from './nbsfile';
 
 class Parser {
   public buffer: Binary;

@@ -1,7 +1,7 @@
-import jBinary from "jbinary";
-import { Header, Note, Layer, Instrument } from "./basic/exports";
-import { Writer } from "./writer";
-import { BinaryWrite } from "./wrappers/jbinary";
+import jBinary from 'jbinary';
+import { Header, Note, Layer, Instrument } from './basic/exports';
+import { Writer } from './writer';
+import { BinaryWrite } from './wrappers/jbinary_wrap';
 
 interface Chord {
   tick: number;
@@ -36,7 +36,7 @@ class NBSFile {
       let jbinary = jBinary as any;
 
       jbinary = new jbinary(this.allocateBuffer(), {
-        "jBinary.littleEndian": true,
+        'jBinary.littleEndian': true,
       });
 
       try {

@@ -12,32 +12,32 @@ class Binary {
 
   /** Reads a unsigned byte at pointer.*/
   uint8(): number {
-    return this.buffer.read("uint8");
+    return this.buffer.read('uint8');
   }
 
   /** Reads a signed byte at pointer.*/
   int8(): number {
-    return this.buffer.read("int8");
+    return this.buffer.read('int8');
   }
 
   /** Reads a unsigned short at pointer.*/
   uint16(): number {
-    return this.buffer.read("uint16");
+    return this.buffer.read('uint16');
   }
 
   /** Reads a signed short at pointer.*/
   int16(): number {
-    return this.buffer.read("int16");
+    return this.buffer.read('int16');
   }
 
   /** Reads a unsigned integer at pointer.*/
   uint32(): number {
-    return this.buffer.read("uint32");
+    return this.buffer.read('uint32');
   }
 
   /** Reads a signed integer at pointer.*/
   int32(): number {
-    return this.buffer.read("int32");
+    return this.buffer.read('int32');
   }
 
   /** Reads a string at pointer
@@ -46,7 +46,7 @@ class Binary {
    * and then retrieves the text.
    */
   string(): string {
-    return this.buffer.read(["string", this.int32()]);
+    return this.buffer.read(['string', this.int32()]);
   }
 
   /** Jumps the amount specified by a short at pointer. */
@@ -68,38 +68,38 @@ class BinaryWrite {
 
   /** Writes a unsigned byte at pointer.*/
   uint8(value: number): void {
-    this.buffer.write("uint8", value);
+    this.buffer.write('uint8', value);
   }
 
   /** Writes a signed byte at pointer.*/
   int8(value: number): void {
-    this.buffer.write("int8", value);
+    this.buffer.write('int8', value);
   }
 
   /** Writes a unsigned short at pointer.*/
   uint16(value: number): void {
-    this.buffer.write("uint16", value);
+    this.buffer.write('uint16', value);
   }
 
   /** Writes a signed short at pointer.*/
   int16(value: number): void {
-    this.buffer.write("int16", value);
+    this.buffer.write('int16', value);
   }
 
   /** Writes a unsigned integer at pointer.*/
   uint32(value: number): void {
-    this.buffer.write("uint32", value);
+    this.buffer.write('uint32', value);
   }
 
   /** Writes a signed integer at pointer.*/
   int32(value: number): void {
-    this.buffer.write("int32", value);
+    this.buffer.write('int32', value);
   }
 
   /** Writes first the string length and then the text.*/
   string(value: string): void {
     this.int32(value.length);
-    this.buffer.write("string", value);
+    this.buffer.write('string', value);
   }
 }
 

@@ -1,4 +1,4 @@
-import { Binary } from "../wrappers/jbinary";
+import { Binary } from '../wrappers/jbinary_wrap';
 
 interface HeaderSettings {
   version?: number;
@@ -58,10 +58,10 @@ class Header {
     default_instruments = 16,
     song_length = 0,
     song_layers = 0,
-    song_name = "",
-    song_author = "",
-    original_author = "",
-    description = "",
+    song_name = '',
+    song_author = '',
+    original_author = '',
+    description = '',
 
     tempo = 10.0,
     auto_save = false,
@@ -73,7 +73,7 @@ class Header {
     right_clicks = 0,
     blocks_added = 0,
     blocks_removed = 0,
-    song_origin = "",
+    song_origin = '',
     loop = false,
     max_loop_count = 0,
     loop_start = 0,

@@ -1,7 +1,7 @@
-import jBinary from "jbinary";
-import { NBSFile } from "../nbsfile";
-import { Parser } from "../parser";
-import { Header, Layer } from "../basic/exports";
+import jBinary from 'jbinary';
+import { NBSFile } from '../nbsfile';
+import { Parser } from '../parser';
+import { Header, Layer } from '../basic/exports';
 
 /** Reads a Note Block Studio file from the specified source
  *
@@ -13,7 +13,7 @@ const load = (source: any): Promise<NBSFile> =>
   new Promise((resolve, reject) => {
     jBinary
       .load(source, {
-        "jBinary.littleEndian": true,
+        'jBinary.littleEndian': true,
       })
       .then((binary: any) => {
         let parser = new Parser(binary);
@@ -40,7 +40,7 @@ const new_file = (header: Header): NBSFile => {
     [
       Layer.named({
         id: 0,
-        name: "",
+        name: '',
         lock: false,
         volume: 100,
         panning: 0,

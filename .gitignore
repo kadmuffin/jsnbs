@@ -95,6 +95,8 @@ typings/
 .nuxt
 dist
 lib
+lib-esm
+_bundles
 
 # Gatsby files
 .cache/
@@ -119,5 +121,8 @@ lib
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+
+# Ignore Write Test File
+write_test.nbs
 
 # End of https://www.toptal.com/developers/gitignore/api/node,code

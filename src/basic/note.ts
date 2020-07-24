@@ -30,7 +30,7 @@ class Note {
    *  panning: The stereo position of the note (from -100 to 100; 0 is center panning).
    *
    *  @param
-   *  pitch: The fine pitch of the note (from -32768 to 32767; NBS is limited from -1200 to 1200).
+   *  pitch: The fine pitch of the note (from -1200 to 1200).
    */
   constructor(
     public tick: number,

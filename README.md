@@ -2,36 +2,39 @@
 
 # jsnbs
 
+![Build Status](https://travis-ci.org/kadmuffin/jsnbs.svg?branch=ts-port)
+![NPM Version](https://img.shields.io/npm/v/jsnbs.svg)
+
 `jsnbs` brings the power of `pynbs` to the web, letting you iterate over Note Block Studio songs.
 
 ```javascript
-const jsnbs = require("jsnbs");
+const jsnbs = require('jsnbs');
 
-jsnbs.load("demo_song.nbs").then((song) => {
+jsnbs.load('demo_song.nbs').then((song) => {
   for (const chord in song.chords()) {
     console.log(chord);
   }
 });
 ```
 
-If you want to modify or save nbs files with `jsnbs`, the code should be able to handle saving in most cases.
+`jsnbs` can as well handle writing of new songs.
 
 ```javascript
-const jsnbs = require("jsnbs");
+const jsnbs = require('jsnbs');
 
-jsnbs.load("demo_song.nbs").then((song) => {
+jsnbs.load('demo_song.nbs').then((song) => {
+  song.notes.push(
+    ...[
+      jsnbs.Note.named({
+        tick: 0,
+        layer: 0,
+        instrument: 0,
+        key: 35,
+      }),
+    ]
+  );
 
-  song.notes.push(..[
-    jsnbs.Note.named({
-      tick: 0,
-      layer: 0,
-      instrument: 0,
-      key: 35
-    })
-  ])
-
-  song.save('new_song.nbs')
-
+  song.save('my_song.nbs');
 });
 ```
 
@@ -166,10 +169,10 @@ for (const chord in demo_song.chords()){
 ### Creating new files
 
 You can create new files using the `new_file()` function. The function lets
-you specify header attributes with keyword arguments.
+you specify header attributes with an object.
 
 ```javascript
-let new_file = jsnbs.new_file(jsnbs.Header({ song_name: "Hello world" }));
+let new_file = jsnbs.new_file(jsnbs.Header({ song_name: 'Hello world' }));
 ```
 
 The function returns a new `jsnbs` file object that you can now edit
@@ -177,10 +180,11 @@ programmatically.
 
 ### Saving files
 
-This port is mainly intended for reading, but you should be able to use the `save()` method to encode and write the files.
+You can use the `save()` method to encode and write the file to a specified
+location.
 
 ```javascript
-new_file.save("new_file.nbs");
+new_file.save('new_file.nbs');
 ```
 
 By default, the file will be saved in the latest NBS version available.
@@ -188,11 +192,11 @@ To save the file in an older version, you can use the `version` parameter:
 
 ```javascript
 // This will save the song in the classic format.
-new_file.save("new_file.nbs", (version = 0));
+new_file.save('new_file.nbs', 0);
 ```
 
 (Keep in mind some of the song properties may be lost when saving in older versions.)
 
 ---
 
-License - [MIT](https://github.com/vberlier/jsnbs/blob/master/LICENSE)
+License - [MIT](https://github.com/kadmuffin/jsnbs/blob/master/LICENSE)

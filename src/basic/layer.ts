@@ -13,11 +13,11 @@ class Layer {
    * @param name The name for the layer
    * @param lock Sets if the layer was marked as locked
    * @param volume Changes the volume of layer (from 0-100)
-   * @param panning Changes how much the layer is panned to the left/right (-100 is 2 blocks right; 0 is center; -100 is 2 blocks left)
+   * @param panning Changes how much the layer is panned to the left/right (-100 is 2 blocks right; 0 is center; 100 is 2 blocks left)
    */
   constructor(
     public id: number,
-    public name: string = "",
+    public name: string = '',
     public lock: boolean = false,
     public volume: number = 100,
     public panning: number = 0
@@ -38,7 +38,7 @@ class Layer {
    */
   static named({
     id,
-    name = "",
+    name = '',
     lock = false,
     volume = 100,
     panning = 0,
