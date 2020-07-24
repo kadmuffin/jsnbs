@@ -2,7 +2,7 @@
   "name": "jsnbs",
   "version": "0.1.0",
   "description": "A Port of pynbs by vberlier for the web!",
-  "main": "dist/index.cjs.js",
+  "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "browser": "dist/index.umd.min.js",
   "browser-dev": "dist/index.umd.js",
@@ -16,7 +16,8 @@
     "test:unit": "jest --runInBand --detectOpenHandles",
     "test:clean": "shx rm write_test.nbs",
     "lint": "prettier **/*.{ts,js,json} --write",
-    "build": "npm run clean && bili",
+    "build": "npm run clean && npm run build:bili",
+    "build:bili": "bili",
     "clean": "shx rm -rf dist",
     "prepublishOnly": "npm run build && npm run test"
   },
