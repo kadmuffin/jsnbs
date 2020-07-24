@@ -13,8 +13,7 @@
     "types"
   ],
   "scripts": {
-    "test": "npm run test:lint && npm run test:unit && npm run test:clean",
-    "test:lint": "prettier **/*.{ts,js,json} --check",
+    "test": "npm run test:unit && npm run test:clean",
     "test:unit": "jest --runInBand --detectOpenHandles",
     "test:clean": "shx rm write_test.nbs",
     "lint": "prettier **/*.{ts,js,json} --write",
