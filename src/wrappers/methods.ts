@@ -19,7 +19,7 @@ const load = (source: any): Promise<NBSFile> =>
         let parser = new Parser(binary);
 
         try {
-          resolve(parser.create_file());
+          resolve(parser.read_file());
         } catch (e) {
           reject(e);
         }

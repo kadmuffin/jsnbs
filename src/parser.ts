@@ -9,7 +9,7 @@ class Parser {
   }
 
   /** Returns a NBSFile instance from the buffer */
-  create_file(): NBSFile {
+  read_file(): NBSFile {
     let header = this.parse_header();
     return new NBSFile(
       header,
