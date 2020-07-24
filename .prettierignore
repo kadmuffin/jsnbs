@@ -1,1 +1,4 @@
 dist/
+types/
+example/
+node_modules/

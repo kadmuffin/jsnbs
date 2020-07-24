@@ -1,6 +1,6 @@
 # jsnbs
 
-![Build Status](https://travis-ci.org/kadmuffin/jsnbs.svg)
+![Build Status](https://travis-ci.com/kadmuffin/jsnbs.svg?branch=master)
 ![NPM Version](https://img.shields.io/npm/v/jsnbs.svg)
 
 > This repository is a typescript port of the python library [pynbs](https://github.com/vberlier/pynbs) made by [vberlier](https://github.com/vberlier). Check his repo for the project commit history & more.
