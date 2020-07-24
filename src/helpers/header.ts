@@ -1,4 +1,4 @@
-import { Binary } from "../jbinary_wrapper";
+import { Binary } from "../wrappers/jbinary";
 
 const CURRENT_NBS_VERSION = 4;
 

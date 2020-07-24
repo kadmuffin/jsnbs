@@ -1,5 +1,6 @@
-import { Binary } from "./jbinary_wrapper";
+import { Binary } from "./wrappers/jbinary";
 import { Header, Note, Layer, Instrument } from "./helpers/exports";
+import { NBSFile } from "./nbsfile";
 
 class Parser {
   public buffer: Binary;
@@ -8,7 +9,15 @@ class Parser {
   }
 
   /** Returns a NBSFile instance from the buffer */
-  create_file() {}
+  create_file(): NBSFile {
+    let header = this.parse_header();
+    return new NBSFile(
+      header,
+      Array.from(this.parse_notes()),
+      Array.from(this.parse_layers(header.song_layers, header.version)),
+      Array.from(this.parse_instruments())
+    );
+  }
 
   /** Retrieves the header on the buffer
    *
