@@ -1,20 +1,23 @@
-> This repository is a typescript port of the python library [pynbs](https://github.com/vberlier/pynbs) made by [@vberlier](https://github.com/vberlier).
-
 # jsnbs
 
-![Build Status](https://travis-ci.org/kadmuffin/jsnbs.svg?branch=ts-port)
+![Build Status](https://travis-ci.org/kadmuffin/jsnbs.svg)
 ![NPM Version](https://img.shields.io/npm/v/jsnbs.svg)
 
-`jsnbs` brings the power of `pynbs` to the web, letting you iterate over Note Block Studio songs.
+> This repository is a typescript port of the python library [pynbs](https://github.com/vberlier/pynbs) made by [vberlier](https://github.com/vberlier). Check his repo for the project commit history & more.
+
+`jsnbs` brings the power of `pynbs` to the web and node, letting you iterate over Note Block Studio songs.
 
 ```javascript
 const jsnbs = require('jsnbs');
 
-jsnbs.load('demo_song.nbs').then((song) => {
-  for (const chord in song.chords()) {
-    console.log(chord);
-  }
-});
+jsnbs
+  .load('demo_song.nbs')
+  .then((song) => {
+    for (const chord in song.chords()) {
+      console.log(chord);
+    }
+  })
+  .catch((err) => console.log(err));
 ```
 
 `jsnbs` can as well handle writing of new songs.
@@ -22,20 +25,23 @@ jsnbs.load('demo_song.nbs').then((song) => {
 ```javascript
 const jsnbs = require('jsnbs');
 
-jsnbs.load('demo_song.nbs').then((song) => {
-  song.notes.push(
-    ...[
-      jsnbs.Note.named({
-        tick: 0,
-        layer: 0,
-        instrument: 0,
-        key: 35,
-      }),
-    ]
-  );
+jsnbs
+  .load('demo_song.nbs')
+  .then((song) => {
+    song.notes.push(
+      ...[
+        jsnbs.Note.named({
+          tick: 0,
+          layer: 0,
+          instrument: 0,
+          key: 35,
+        }),
+      ]
+    );
 
-  song.save('my_song.nbs');
-});
+    song.save('new_song.nbs');
+  })
+  .catch((err) => console.log(err));
 ```
 
 ## Installation
@@ -57,14 +63,29 @@ the older versions.
 
 ### Reading files
 
-You can use the `read()` function to read and parse a specific NBS file.
+You can use the `read()` function to read & parse any supported jBinary [source type](https://github.com/jDataView/jBinary/wiki/Loading-and-saving-data), usually a file path or a file object.
 
-```python
-jsnbs.read('demo_song.nbs')
+```javascript
+jsnbs.read('demo_song.nbs');
 ```
 
 The `read()` function returns a Promise of the `jsnbs` file object. These objects have several
 attributes that mirror the binary structure of NBS files.
+
+If you need to use jBinary directly, the `Parser()` class supports the buffer object.
+
+```javascript
+const jBinary = require('jbinary');
+const jsnbs = require('jsnbs');
+
+jBinary
+  .load('demo_song.nbs')
+  .then((binary) => {
+    let file = Parser(binary).read_file();
+    // ...
+  })
+  .catch((err) => console.log(err));
+```
 
 #### Header
 
@@ -181,9 +202,10 @@ programmatically.
 ### Saving files
 
 You can use the `save()` method to encode and write the file to a specified
-location.
+location or download the file.
 
 ```javascript
+// This will use jBinary save() method
 new_file.save('new_file.nbs');
 ```
 
@@ -198,5 +220,7 @@ new_file.save('new_file.nbs', 0);
 (Keep in mind some of the song properties may be lost when saving in older versions.)
 
 ---
+
+Ported library - [pynbs](https://github.com/vberlier/pynbs)
 
 License - [MIT](https://github.com/kadmuffin/jsnbs/blob/master/LICENSE)
