@@ -4,11 +4,13 @@
   "description": "A Port of pynbs by vberlier for the web!",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
-  "browser": "dist/index.umd.min.js",
-  "browser-dev": "dist/index.umd.js",
-  "types": "dist/index.d.ts",
+  "browser": "dist/index.umd.js",
+  "unpkg": "dist/index.umd.min.js",
+  "jsdelivr": "dist/index.umd.min.js",
+  "types": "types/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "scripts": {
     "test": "npm run test:lint && npm run test:unit && npm run test:clean",
@@ -18,7 +20,7 @@
     "lint": "prettier **/*.{ts,js,json} --write",
     "build": "npm run clean && npm run build:bili",
     "build:bili": "bili",
-    "clean": "shx rm -rf dist",
+    "clean": "shx rm -rf dist types",
     "prepublishOnly": "npm run build && npm run test"
   },
   "repository": {

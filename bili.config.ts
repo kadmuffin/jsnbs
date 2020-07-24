@@ -6,6 +6,7 @@ const config: Config = {
       tsconfigOverride: {
         include: ['src'],
       },
+      useTsconfigDeclarationDir: true,
     },
   },
 
