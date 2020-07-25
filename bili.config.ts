@@ -13,6 +13,9 @@ const config: Config = {
   externals: ['jbinary'],
 
   input: 'src/index.ts',
+
+  banner:
+    '/* jsnbs\n * \n * Copyright (c) 2018 Valentin Berlier\n * Copyright (c) 2020 KadMuffin\n * \n * Copyrights licensed under the MIT License.\n * \n * See the accompanying LICENSE file for terms.\n*/\n',
   output: {
     format: ['cjs', 'esm', 'umd', 'umd-min'],
     moduleName: 'jsnbs',

@@ -1,3 +1,13 @@
+/* jsnbs
+ *
+ * Copyright (c) 2018 Valentin Berlier
+ * Copyright (c) 2020 KadMuffin
+ *
+ * Copyrights licensed under the MIT License.
+ *
+ * See the accompanying LICENSE file for terms.
+ */
+
 import jBinary from 'jbinary';
 import { Header, Note, Layer, Instrument } from './basic/exports';
 import { Writer } from './writer';

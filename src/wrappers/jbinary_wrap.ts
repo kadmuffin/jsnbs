@@ -1,3 +1,13 @@
+/* jsnbs: Port of pynbs for the web!
+ *
+ * Copyright (c) 2020 KadMuffin
+ * Copyright (c) 2018 Valentin Berlier
+ *
+ * Copyrights licensed under the MIT License.
+ *
+ * See the accompanying LICENSE file for terms.
+ */
+
 /** Wraps the jBinary object and provides type checking
  *
  *  @param

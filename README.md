@@ -1,9 +1,10 @@
 # jsnbs
 
-![Build Status](https://travis-ci.com/kadmuffin/jsnbs.svg?branch=master)
+[![Build Status](https://travis-ci.com/kadmuffin/jsnbs.svg)](https://travis-ci.com/kadmuffin/jsnbs)
 ![NPM Version](https://img.shields.io/npm/v/jsnbs.svg)
+[![License](https://img.shields.io/github/license/kadmuffin/jsnbs.svg)](https://github.com/kadmuffin/jsnbs/blob/master/LICENSE)
 
-> This repository is a typescript port of the python library [pynbs](https://github.com/vberlier/pynbs) made by [vberlier](https://github.com/vberlier). Check his repo for the project commit history & more.
+> This repository is a typescript port of the python library [pynbs](https://github.com/vberlier/pynbs) made by [vberlier](https://github.com/vberlier). Refer to the [LICENSE](https://github.com/kadmuffin/jsnbs/blob/master/LICENSE) file for terms.
 
 `jsnbs` brings the power of `pynbs` to the web and node, letting you iterate over Note Block Studio songs.
 
@@ -20,7 +21,7 @@ jsnbs
   .catch((err) => console.log(err));
 ```
 
-`jsnbs` can as well handle writing of new songs.
+`jsnbs` should be able to handle writing in most situations.
 
 ```javascript
 const jsnbs = require('jsnbs');
@@ -79,10 +80,12 @@ const jBinary = require('jbinary');
 const jsnbs = require('jsnbs');
 
 jBinary
-  .load('demo_song.nbs')
+  .load('demo_song.nbs', {
+    'jBinary.littleEndian': true,
+  })
   .then((binary) => {
     let file = Parser(binary).read_file();
-    // ...
+    ...
   })
   .catch((err) => console.log(err));
 ```
