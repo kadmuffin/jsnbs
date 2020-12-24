@@ -1,13 +1,4 @@
-/* jsnbs
- *
- * Copyright (c) 2018 Valentin Berlier
- * Copyright (c) 2020 KadMuffin
- *
- * Copyrights licensed under the MIT License.
- *
- * See the accompanying LICENSE file for terms.
- */
-
+/* eslint-disable @typescript-eslint/naming-convention */
 interface InstrumentSettings {
   id: number;
   name: string;
@@ -17,31 +8,34 @@ interface InstrumentSettings {
 }
 
 class Instrument {
-  /** Stores a Custom Instrument settings
-   *
-   * @param id The Instrument ID (This number will determinate the Instrument position)
-   * @param name Name of the instrument
-   * @param file The name of the sound file
-   * @param pitch The pitch of the sound file (from 0-87, Defaults to 45)
-   * @param press_key Whether the piano should press keys when the marker passes them
-   */
-  constructor(
-    public id: number,
-    public name: string,
-    public file: string,
-    public pitch: number,
-    public press_key: boolean
-  ) {}
+  id: number;
+  name: string;
+  file: string;
+  pitch: number;
+  press_key: boolean;
 
-  static named({
+  /** Stores a Custom Instrument settings.
+   * @class
+   * @param {Object.<string, any>} instrument The object with the instrument settings.
+   * @param {number}  instrument.id        The Instrument ID (This number will determinate the Instrument position).
+   * @param {string}  instrument.name      Name of the instrument.
+   * @param {string}  instrument.file      The name of the sound file.
+   * @param {number}  instrument.pitch     The pitch of the sound file (from 0-87, Defaults to 45).
+   * @param {boolean} instrument.press_key Whether the piano should press keys when the marker passes them.
+   */
+  constructor({
     id,
     name,
     file,
     pitch = 45,
     press_key = false,
-  }: InstrumentSettings): Instrument {
-    return new Instrument(id, name, file, pitch, press_key);
+  }: InstrumentSettings) {
+    this.id = id;
+    this.name = name;
+    this.file = file;
+    this.pitch = pitch;
+    this.press_key = press_key;
   }
 }
 
-export { Instrument };
+export {Instrument};

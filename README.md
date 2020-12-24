@@ -1,94 +1,111 @@
 # jsnbs
 
+[![NPM Version](https://img.shields.io/npm/v/jsnbs.svg)](https://npmjs.com/package/jsnbs)
 [![Build Status](https://travis-ci.com/kadmuffin/jsnbs.svg)](https://travis-ci.com/kadmuffin/jsnbs)
-![NPM Version](https://img.shields.io/npm/v/jsnbs.svg)
 [![License](https://img.shields.io/github/license/kadmuffin/jsnbs.svg)](https://github.com/kadmuffin/jsnbs/blob/master/LICENSE)
 
 > This repository is a typescript port of the python library [pynbs](https://github.com/vberlier/pynbs) made by [vberlier](https://github.com/vberlier). Refer to the [LICENSE](https://github.com/kadmuffin/jsnbs/blob/master/LICENSE) file for terms.
 
-`jsnbs` brings the power of `pynbs` to the web and node, letting you iterate over Note Block Studio songs.
+`jsnbs` brings the power of `pynbs` to node, letting you iterate over Note Block Studio songs.
 
 ```javascript
+const fs = require('fs');
 const jsnbs = require('jsnbs');
 
-jsnbs
-  .load('demo_song.nbs')
-  .then((song) => {
-    for (const chord in song.chords()) {
-      console.log(chord);
-    }
-  })
-  .catch((err) => console.log(err));
+fs.readFile('demo_song.nbs', (err, data) => {
+  jsnbs
+    .load(data)
+    .then((song) => {
+      for (const chord in song.chords()) {
+        console.log(chord);
+      }
+    })
+    .catch((err) => console.log(err));
+});
 ```
 
 `jsnbs` should be able to handle writing in most situations.
 
 ```javascript
+const fs = require('fs');
 const jsnbs = require('jsnbs');
 
-jsnbs
-  .load('demo_song.nbs')
-  .then((song) => {
-    song.notes.push(
-      ...[
-        jsnbs.Note.named({
-          tick: 0,
-          layer: 0,
-          instrument: 0,
-          key: 35,
-        }),
-      ]
-    );
+const newSong = jsnbs.newFile({
+  song_name: 'New Song!',
+  tempo: 9.0,
+});
 
-    song.save('new_song.nbs');
+newSong.notes.push(
+  ...[
+    new jsnbs.Note({
+      tick: 0,
+      layer: 0,
+      instrument: 0,
+      key: 35,
+    }),
+  ],
+);
+
+song
+  .writeBuffer()
+  .then((data) => {
+    fs.writeFile('my_new_song.nbs', data);
   })
-  .catch((err) => console.log(err));
+  .catch((error) => {
+    throw error;
+  });
 ```
 
-## Installation
+## Running tests
 
-The package can be installed with `npm` or `yarn`.
+The repository uses Jest as it's testing framework, you can run them with `npm run`.
 
 ```bash
-$ npm i jsnbs
-# or with yarn
-$ yarn add jsnbs
+npm run test
 ```
 
-The latest release follows the latest version of the NBS file format
-[specification](https://hielkeminecraft.github.io/OpenNoteBlockStudio/nbs)
-(version 4). However, it also allows you to load and save files in any of
-the older versions.
+## Building files
+
+You can run the build process with Bili using `npm`.
+
+```bash
+npm run build
+```
+
+This will create bundles for `commonjs`, `module` & `umd` on the `dist/` folder.
+
+## Browser Support
+
+For enabling browser support, you should use [browserify](https://github.com/browserify/browserify).
+
+```bash
+npm install browserify --save-dev
+```
+
+And then use `browserify` with the included file:
+
+```bash
+npx browserify node_modules/jsnbs/dist/index.umd.min.js -o jsnbs.min.js
+```
+
+Or you can install the [buffer module](https://github.com/feross/buffer):
+
+```bash
+npm install buffer
+```
 
 ## Basic usage
 
 ### Reading files
 
-You can use the `read()` function to read & parse any supported jBinary [source type](https://github.com/jDataView/jBinary/wiki/Loading-and-saving-data), usually a file path or a file object.
+You can use the `load()` function to parse a Buffer source.
 
 ```javascript
-jsnbs.read('demo_song.nbs');
+jsnbs.load(buffer);
 ```
 
-The `read()` function returns a Promise of the `jsnbs` file object. These objects have several
+The `load()` function returns a Promise of the `jsnbs` file object. These objects have several
 attributes that mirror the binary structure of NBS files.
-
-If you need to use jBinary directly, the `Parser()` class supports the buffer object.
-
-```javascript
-const jBinary = require('jbinary');
-const jsnbs = require('jsnbs');
-
-jBinary
-  .load('demo_song.nbs', {
-    'jBinary.littleEndian': true,
-  })
-  .then((binary) => {
-    let file = Parser(binary).read_file();
-    ...
-  })
-  .catch((err) => console.log(err));
-```
 
 #### Header
 
@@ -182,7 +199,7 @@ Iterating over a `jsnbs` file object yields consecutively all the chords of the 
 the associated tick.
 
 ```javascript
-for (const chord in demo_song.chords()){
+for (const chord of demo_song.chords()){
     const { tick, notes } = chord;
     ...
 }
@@ -196,7 +213,7 @@ You can create new files using the `new_file()` function. The function lets
 you specify header attributes with an object.
 
 ```javascript
-let new_file = jsnbs.new_file(jsnbs.Header({ song_name: 'Hello world' }));
+let new_file = jsnbs.new_file(jsnbs.Header({song_name: 'Hello world'}));
 ```
 
 The function returns a new `jsnbs` file object that you can now edit
@@ -204,20 +221,21 @@ programmatically.
 
 ### Saving files
 
-You can use the `save()` method to encode and write the file to a specified
-location or download the file.
+You can use the `writeBuffer()` method to encode a Buffer instance and write it with `fs`.
 
 ```javascript
-// This will use jBinary save() method
-new_file.save('new_file.nbs');
+new_file.encodeBuffer().then((data) =>
+  // Write Buffer with fs
+  fs.writeFile('new_file.nbs', data);
+);
 ```
 
-By default, the file will be saved in the latest NBS version available.
+By default, the file will be encoded in the latest NBS version available.
 To save the file in an older version, you can use the `version` parameter:
 
 ```javascript
-// This will save the song in the classic format.
-new_file.save('new_file.nbs', 0);
+// This will encode the song in the classic format.
+new_file.writeBuffer(0);
 ```
 
 (Keep in mind some of the song properties may be lost when saving in older versions.)

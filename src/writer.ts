@@ -1,35 +1,25 @@
-/* jsnbs
- *
- * Copyright (c) 2018 Valentin Berlier
- * Copyright (c) 2020 KadMuffin
- *
- * Copyrights licensed under the MIT License.
- *
- * See the accompanying LICENSE file for terms.
- */
-
-import { BinaryWrite } from './wrappers/jbinary_wrap';
-import { NBSFile } from './nbsfile';
+// eslint-disable-next-line import/no-cycle
+import {NBSFile} from './nbsfile';
+import {WriteBuffer} from './wrappers/buffer';
 
 class Writer {
-  /** Holds the writes functions and runs them
-   *
-   * @param
-   * buffer: Takes a BinaryWrite class that wraps jBinary write methods (see 'src/wrappers/jbinary')
-   */
-  constructor(public buffer: BinaryWrite) {}
+  readonly buffer: WriteBuffer;
+
+  constructor(buffer: WriteBuffer) {
+    this.buffer = buffer;
+  }
 
   /** Runs all write functions in order */
-  encode_file(nbs_file: NBSFile, target: number): void {
-    this.write_header(nbs_file, target);
-    this.write_notes(nbs_file, target);
-    this.write_layers(nbs_file, target);
-    this.write_instruments(nbs_file);
+  encodeFile(nbsFile: NBSFile, target: number): void {
+    this.writeHeader(nbsFile, target);
+    this.writeNotes(nbsFile, target);
+    this.writeLayers(nbsFile, target);
+    this.writeInstruments(nbsFile);
   }
 
   /** Writes the header format based on target number */
-  write_header(nbs_file: NBSFile, target: number): void {
-    let header = nbs_file.header;
+  writeHeader(nbsFile: NBSFile, target: number): void {
+    const header = nbsFile.header;
 
     if (target > 0) {
       this.buffer.uint16(0);
@@ -68,18 +58,18 @@ class Writer {
   }
 
   /** Writes notes & add zeros where needed (for jumps) */
-  write_notes(nbs_file: NBSFile, target: number): void {
-    let current_tick = -1;
+  writeNotes(nbsFile: NBSFile, target: number): void {
+    let currentTick = -1;
 
-    if (nbs_file.notes.length > 0) {
-      for (const { tick, notes } of nbs_file.chords()) {
-        this.buffer.uint16(tick - current_tick);
-        current_tick = tick;
-        let current_layer = -1;
+    if (nbsFile.notes.length > 0) {
+      for (const {tick, notes} of nbsFile.chords()) {
+        this.buffer.uint16(tick - currentTick);
+        currentTick = tick;
+        let currentLayer = -1;
 
         for (const note of notes) {
-          this.buffer.uint16(note.layer - current_layer);
-          current_layer = note.layer;
+          this.buffer.uint16(note.layer - currentLayer);
+          currentLayer = note.layer;
 
           this.buffer.uint8(note.instrument);
           this.buffer.uint8(note.key);
@@ -87,7 +77,7 @@ class Writer {
           if (target >= 4) {
             this.buffer.uint8(note.velocity);
             this.buffer.uint8(note.panning + 100);
-            this.buffer.uint16(note.pitch);
+            this.buffer.int16(note.pitch);
           }
         }
         this.buffer.uint16(0);
@@ -96,9 +86,11 @@ class Writer {
     this.buffer.uint16(0);
   }
 
-  /** Writes layers (run after write_notes()) */
-  write_layers(nbs_file: NBSFile, target: number): void {
-    for (const layer of nbs_file.layers.sort((a, b) => a.id - b.id)) {
+  /** Writes layers (run after writeNotes()) */
+  writeLayers(nbsFile: NBSFile, target: number): void {
+    for (const layer of nbsFile.layers.sort(
+      (layerA, layerB) => layerA.id - layerB.id,
+    )) {
       this.buffer.string(layer.name);
       if (target >= 4) this.buffer.uint8(layer.lock ? 1 : 0);
 
@@ -108,11 +100,13 @@ class Writer {
     }
   }
 
-  /** Writes custom instruments (run after write_layers()) */
-  write_instruments(nbs_file: NBSFile): void {
-    this.buffer.uint8(nbs_file.instruments.length);
+  /** Writes custom instruments (run after writeLayers()) */
+  writeInstruments(nbsFile: NBSFile): void {
+    this.buffer.uint8(nbsFile.instruments.length);
 
-    for (const instrument of nbs_file.instruments.sort((a, b) => a.id - b.id)) {
+    for (const instrument of nbsFile.instruments.sort(
+      (instrumentA, instrumentB) => instrumentA.id - instrumentB.id,
+    )) {
       this.buffer.string(instrument.name);
       this.buffer.string(instrument.file);
       this.buffer.uint8(instrument.pitch);
@@ -121,4 +115,4 @@ class Writer {
   }
 }
 
-export { Writer };
+export {Writer};

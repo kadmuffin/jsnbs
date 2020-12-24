@@ -1,33 +1,74 @@
-/* jsnbs
- *
- * Copyright (c) 2018 Valentin Berlier
- * Copyright (c) 2020 KadMuffin
- *
- * Copyrights licensed under the MIT License.
- *
- * See the accompanying LICENSE file for terms.
- */
-
-import jBinary from 'jbinary';
-import { Header, Note, Layer, Instrument } from './basic/exports';
-import { Writer } from './writer';
-import { BinaryWrite } from './wrappers/jbinary_wrap';
+// eslint-disable-next-line import/no-cycle
+import {Writer} from './writer';
+import {WriteBuffer} from './wrappers/buffer';
+import {Header, Note, Layer, Instrument} from './basic/exports';
 
 interface Chord {
   tick: number;
-  notes: Array<Note>;
+  notes: Note[];
 }
 
 class NBSFile {
   constructor(
     public header: Header,
-    public notes: Array<Note>,
-    public layers: Array<Layer>,
-    public instruments: Array<Instrument>
+    public notes: Note[],
+    public layers: Layer[],
+    public instruments: Instrument[],
   ) {}
 
-  /** Updates song_length & song_layers */
-  update_header(version: number = -1) {
+  /** Allocates a buffer and Writes a NBS File in it.
+   *
+   *  @param {number} version The target version to export.
+   *
+   *  @returns {Promise.<Buffer>} Buffer Promise.
+   */
+  writeBuffer(version: number = Header.CURRENT_NBS_VERSION) {
+    this.updateHeader(version);
+    return new Promise<Buffer>((resolve) => {
+      const writer = new Writer(new WriteBuffer(this.allocateBuffer()));
+
+      writer.encodeFile(this, version);
+
+      resolve(writer.buffer.data);
+    });
+  }
+
+  /** Function for looping thought notes.
+   *
+   *  @generator Loops thought Notes.
+   *  @returns {Object} Chord object.
+   */
+  *chords(): Generator<Chord> {
+    if (this.notes.length <= 0) return;
+
+    let chord: Note[] = [];
+    let currentTick = this.notes[0].tick;
+
+    for (const note of this.notes.sort(
+      (noteA: Note, noteB: Note) => noteA.tick - noteB.tick,
+    )) {
+      if (note.tick === currentTick) {
+        chord.push(note);
+      } else {
+        chord = chord.sort(
+          (noteA: Note, noteB: Note) => noteA.layer - noteB.layer,
+        );
+
+        yield {tick: currentTick, notes: chord};
+
+        currentTick = note.tick;
+        chord = [note];
+      }
+    }
+
+    yield {tick: currentTick, notes: chord};
+  }
+
+  /** Sets the header version.
+   *
+   * @param {number} version The target version to update the header.
+   */
+  updateHeader(version = -1): void {
     if (version >= 0) this.header.version = version;
     if (this.notes.length > 0) {
       this.header.song_length = this.notes[this.notes.length - 1].tick;
@@ -35,58 +76,9 @@ class NBSFile {
     this.header.song_layers = this.layers.length;
   }
 
-  /** Allocates a buffer and Writes a NBS File
-   *
-   *  @returns
-   *  Promise
-   */
-  save(dest: any, version: number = Header.CURRENT_NBS_VERSION) {
-    this.update_header(version);
-    return new Promise((resolve, reject) => {
-      let jbinary = jBinary as any;
-
-      jbinary = new jbinary(this.allocateBuffer(), {
-        'jBinary.littleEndian': true,
-      });
-
-      try {
-        let writer = new Writer(new BinaryWrite(jbinary));
-
-        writer.encode_file(this, version);
-
-        resolve(writer.buffer.buffer.saveAs(dest));
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-
-  /** Sorts Notes & Returns a Generator<Chord> object*/
-  *chords(): Generator<Chord> {
-    if (this.notes.length <= 0) return;
-
-    let chord: Array<Note> = [];
-    let current_tick = this.notes[0].tick;
-
-    for (const note of this.notes.sort((a: Note, b: Note) => a.tick - b.tick)) {
-      if (note.tick == current_tick) {
-        chord.push(note);
-      } else {
-        chord = chord.sort((a: Note, b: Note) => a.layer - b.layer);
-
-        yield { tick: current_tick, notes: chord };
-
-        current_tick = note.tick;
-        chord = [note];
-      }
-    }
-
-    yield { tick: current_tick, notes: chord };
-  }
-
   /** Calculates and returns a buffer with the amount of bytes needed for writing */
   private allocateBuffer() {
-    let header_bytes: number =
+    let headerBytes: number =
       this.header.song_name.length +
       2 +
       (this.header.song_author.length + 2) +
@@ -94,26 +86,25 @@ class NBSFile {
       (this.header.description.length + 2) +
       (this.header.song_origin.length + 2);
 
-    header_bytes /= 8;
-    header_bytes += 37;
+    headerBytes /= 8;
+    headerBytes += 37;
 
-    let layout_size = 3;
-    let instruments_size = 2;
+    let layoutSize = 3;
+    let instrumentsSize = 2;
 
-    for (let i = 0; i < this.layers.length; i++) {
-      layout_size += (this.layers[i].name.length + 1) / 8;
-    }
+    this.layers.forEach((layer) => {
+      layoutSize += (layer.name.length + 1) / 8;
+    });
 
-    for (let i = 0; i < this.instruments.length; i++) {
-      layout_size += (this.instruments[i].name.length + 1) / 8;
-      layout_size += (this.instruments[i].file.length + 1) / 8;
-    }
+    this.instruments.forEach((instrument) => {
+      instrumentsSize += (instrument.name.length + 1) / 8;
+      instrumentsSize += (instrument.file.length + 1) / 8;
+    });
 
     return Buffer.alloc(
-      (14 * this.notes.length + header_bytes + layout_size + instruments_size) *
-        3
+      (14 * this.notes.length + headerBytes + layoutSize + instrumentsSize) * 2,
     );
   }
 }
 
-export { NBSFile, Chord };
+export {NBSFile, Chord};

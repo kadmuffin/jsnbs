@@ -1,116 +1,105 @@
-import * as jsnbs from '../src/index';
+/* eslint-disable @typescript-eslint/naming-convention */
 import fs from 'fs';
 
+import * as jsnbs from '../src/index';
+
 test('NBSFile: Save Function & Buffer Alloc', () => {
-  let header = new jsnbs.Header({
+  const header = new jsnbs.Header({
     song_name: 'TEST FILE',
     song_author: 'TEST',
     auto_save: true,
   });
-  let song = jsnbs.new_file(header);
+  const song = jsnbs.newFile(header);
 
   song.notes.push(
     ...[
-      new jsnbs.Note(0, 0, 25),
-      new jsnbs.Note(2, 0, 25),
-      new jsnbs.Note(4, 0, 25),
-    ]
+      new jsnbs.Note({
+        tick: 0,
+        layer: 0,
+        key: 25,
+      }),
+      new jsnbs.Note({
+        tick: 2,
+        layer: 0,
+        key: 25,
+      }),
+      new jsnbs.Note({
+        tick: 4,
+        layer: 0,
+        key: 25,
+      }),
+    ],
   );
 
-  song.instruments.push(new jsnbs.Instrument(0, 'test', 'test', 45, false));
-
-  return song.save('write_test.nbs');
+  song.instruments.push(
+    new jsnbs.Instrument({
+      id: 0,
+      name: 'test',
+      file: 'test',
+      pitch: 0,
+      press_key: false,
+    }),
+  );
+  song
+    .writeBuffer()
+    .then((data) => {
+      fs.writeFileSync('write_test.nbs', data);
+    })
+    .catch((error) => {
+      throw error;
+    });
 });
 
 test('NBSFile: Load Saved File', () => {
-  let header = new jsnbs.Header({
+  const header = new jsnbs.Header({
     song_name: 'TEST FILE',
     song_author: 'TEST',
     auto_save: true,
   });
-  let song = jsnbs.new_file(header);
+  const song = jsnbs.newFile(header);
 
   song.notes.push(
     ...[
-      new jsnbs.Note(0, 0, 25),
-      new jsnbs.Note(2, 0, 25),
-      new jsnbs.Note(4, 0, 25),
-    ]
+      new jsnbs.Note({
+        tick: 0,
+        layer: 0,
+        key: 25,
+      }),
+      new jsnbs.Note({
+        tick: 2,
+        layer: 0,
+        key: 25,
+      }),
+      new jsnbs.Note({
+        tick: 4,
+        layer: 0,
+        key: 25,
+      }),
+    ],
   );
 
-  song.instruments.push(new jsnbs.Instrument(0, 'test', 'test', 45, false));
-
-  song.update_header();
-
-  return jsnbs.load('write_test.nbs').then((write_test) => {
-    expect(write_test).toEqual(song);
-  });
-});
-
-test('NBSFile: Save Function [No Instruments]', () => {
-  let header = new jsnbs.Header({
-    song_name: 'TEST FILE',
-    song_author: 'TEST',
-    auto_save: true,
-  });
-  let song = jsnbs.new_file(header);
-
-  song.notes.push(
-    ...[
-      new jsnbs.Note(0, 0, 25),
-      new jsnbs.Note(2, 0, 25),
-      new jsnbs.Note(4, 0, 25),
-    ]
+  song.instruments.push(
+    new jsnbs.Instrument({
+      id: 0,
+      name: 'test',
+      file: 'test',
+      pitch: 0,
+      press_key: false,
+    }),
   );
 
-  return song.save('write_test.nbs');
-});
+  song.updateHeader();
 
-test('NBSFile: Load Saved File [ No Instruments ]', () => {
-  let header = new jsnbs.Header({
-    song_name: 'TEST FILE',
-    song_author: 'TEST',
-    auto_save: true,
-  });
-  let song = jsnbs.new_file(header);
+  fs.readFile('write_test.nbs', (err, data) => {
+    if (err) throw err;
 
-  song.notes.push(
-    ...[
-      new jsnbs.Note(0, 0, 25),
-      new jsnbs.Note(2, 0, 25),
-      new jsnbs.Note(4, 0, 25),
-    ]
-  );
-
-  song.update_header();
-
-  return jsnbs.load('write_test.nbs').then((write_test) => {
-    expect(write_test).toEqual(song);
-  });
-});
-
-test('NBSFile: Save Function [ No Notes ]', () => {
-  let header = new jsnbs.Header({
-    song_name: 'TEST FILE',
-    song_author: 'TEST',
-    auto_save: true,
-  });
-  let song = jsnbs.new_file(header);
-
-  return song.save('write_test.nbs');
-});
-
-test('NBSFile: Load Saved File [ No Notes ]', () => {
-  let header = new jsnbs.Header({
-    song_name: 'TEST FILE',
-    song_author: 'TEST',
-    auto_save: true,
-  });
-  let song = jsnbs.new_file(header);
-
-  song.update_header();
-
-  return jsnbs.load('write_test.nbs').then((write_test) => {
-    expect(write_test).toEqual(song);
+    jsnbs
+      .load(data)
+      .then((writeTest) => {
+        expect(writeTest).toEqual(song);
+      })
+      .catch((error) => {
+        throw error;
+      });
   });
 });

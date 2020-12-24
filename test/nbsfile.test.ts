@@ -1,11 +1,13 @@
+import fs from 'fs';
+
 import * as jsnbs from '../src/index';
 
 test('NBSFile: Chords Function', () => {
-  let expected_notes = [
+  const expectedNotes = [
     {
       tick: 0,
       notes: [
-        jsnbs.Note.named({
+        new jsnbs.Note({
           tick: 0,
           layer: 0,
           key: 45,
@@ -19,7 +21,7 @@ test('NBSFile: Chords Function', () => {
     {
       tick: 2,
       notes: [
-        jsnbs.Note.named({
+        new jsnbs.Note({
           tick: 2,
           layer: 0,
           key: 45,
@@ -33,7 +35,7 @@ test('NBSFile: Chords Function', () => {
     {
       tick: 4,
       notes: [
-        jsnbs.Note.named({
+        new jsnbs.Note({
           tick: 4,
           layer: 0,
           key: 45,
@@ -48,7 +50,7 @@ test('NBSFile: Chords Function', () => {
     {
       tick: 6,
       notes: [
-        jsnbs.Note.named({
+        new jsnbs.Note({
           tick: 6,
           layer: 0,
           key: 45,
@@ -63,7 +65,7 @@ test('NBSFile: Chords Function', () => {
     {
       tick: 8,
       notes: [
-        jsnbs.Note.named({
+        new jsnbs.Note({
           tick: 8,
           layer: 0,
           key: 45,
@@ -76,7 +78,16 @@ test('NBSFile: Chords Function', () => {
     },
   ];
 
-  return jsnbs.load('test/samples/test_song.nbs').then((song) => {
-    expect(Array.from(song.chords())).toEqual(expected_notes);
+  return fs.readFile('test/samples/test_song.nbs', (err, data) => {
+    if (err) throw err;
+
+    return jsnbs
+      .load(data)
+      .then((song) => {
+        expect(Array.from(song.chords())).toEqual(expectedNotes);
+      })
+      .catch((error) => {
+        throw error;
+      });
   });
 });
