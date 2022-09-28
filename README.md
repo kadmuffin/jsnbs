@@ -1,7 +1,9 @@
 # jsnbs
 
-[![NPM Version](https://img.shields.io/npm/v/jsnbs.svg)](https://npmjs.com/package/jsnbs)
-[![Build Status](https://travis-ci.com/kadmuffin/jsnbs.svg)](https://travis-ci.com/kadmuffin/jsnbs)
+## This repo is currently archived, so you shouldn't use it.
+
+The dependencies in this repo are pretty old, and right now I'm not mantaining this repo.
+
 [![License](https://img.shields.io/github/license/kadmuffin/jsnbs.svg)](https://github.com/kadmuffin/jsnbs/blob/master/LICENSE)
 
 > This repository is a typescript port of the python library [pynbs](https://github.com/vberlier/pynbs) made by [vberlier](https://github.com/vberlier). Refer to the [LICENSE](https://github.com/kadmuffin/jsnbs/blob/master/LICENSE) file for terms.
